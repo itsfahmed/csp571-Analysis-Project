@@ -30,4 +30,4 @@ Our approach involves aggregating air quality data from EPA databases and health
 - Packages such as `tidyverse`, `ggplot2`, `sf`, `raster`, `caret`, and `glmnet` among others.
 
 ## Viewing the Analysis
-The analysis can be viewed by navigating to [Project Analysis](Project_Analysis.html) which provides in-depth insights and findings from our study.
+The analysis can be viewed by navigating to [Project Analysis](dpa-project/script/index.html) which provides in-depth insights and findings from our study.
