@@ -1,0 +1,100 @@
+---
+title: "Data Analysis Project"
+author: "FateenAhmed"
+date: "2024-02-25"
+header-includes:
+  - \usepackage{sectsty}
+  - \sectionfont{\clearpage}
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.width = 5, fig.height = 3)
+```
+
+## Reading and Understanding the Datasets
+
+### Air Quality System (AQS) Dataset
+
+The AQS dataset provides comprehensive data on air quality across the United States across 4 years.
+
+```{r get-aqs-data}
+library(readr)
+aqs_data_2021 <- read_csv("data/aqs/annual_conc_by_monitor_2021.csv")
+head(aqs_data_2021,5)
+aqs_data_2020 <- read_csv("data/aqs/annual_conc_by_monitor_2020.csv")
+head(aqs_data_2020,5)
+aqs_data_2019 <- read_csv("data/aqs/annual_conc_by_monitor_2019.csv")
+head(aqs_data_2019,5)
+aqs_data_2018 <- read_csv("data/aqs/annual_conc_by_monitor_2018.csv")
+head(aqs_data_2018,5)
+```
+
+```{r get-aqs-info}
+# Listing columns for AQS datasets
+cat("Columns for AQS 2021:\n", paste(names(aqs_data_2021), collapse = ", "), "\n\n")
+cat("Columns for AQS 2020:\n", paste(names(aqs_data_2020), collapse = ", "), "\n\n")
+cat("Columns for AQS 2019:\n", paste(names(aqs_data_2019), collapse = ", "), "\n\n")
+cat("Columns for AQS 2018:\n", paste(names(aqs_data_2018), collapse = ", "), "\n\n")
+
+```
+
+### Behavioral Risk Factor Surveillance System (BRFSS) Dataset
+
+The BRFSS dataset includes health-related survey data that is instrumental in understanding public health outcomes. We have collected datasets for 4 years.
+
+```{r get-cdc-data}
+library(haven)
+
+cdc_data_2021 <- read_xpt("data/cdc/MMSA2021.xpt")
+head(cdc_data_2021,5)
+cdc_data_2020 <- read_xpt("data/cdc/MMSA2020.xpt")
+head(cdc_data_2020,5)
+cdc_data_2019 <- read_xpt("data/cdc/MMSA2019.xpt")
+head(cdc_data_2019,5)
+cdc_data_2018 <- read_xpt("data/cdc/MMSA2018.xpt")
+head(cdc_data_2018,5)
+
+```
+
+```{r get-cdc-info}
+# Listing columns for CDC datasets
+cat("Columns for CDC 2021:\n", paste(names(cdc_data_2021), collapse = ", "), "\n\n")
+cat("Columns for CDC 2020:\n", paste(names(cdc_data_2020), collapse = ", "), "\n\n")
+cat("Columns for CDC 2019:\n", paste(names(cdc_data_2019), collapse = ", "), "\n\n")
+cat("Columns for CDC 2018:\n", paste(names(cdc_data_2018), collapse = ", "), "\n\n")
+```
+
+## Feature Explanation
+
+### AQS Dataset Features:
+
+- **State Code, County Code, Site Num**: These identifiers allow us to link air quality data to specific geographic locations, enabling regional analysis and comparison.
+
+- **Parameter Name**: This feature helps us focus on pollutants of interest, based on their known or suspected health impacts.
+
+- **Arithmetic Mean, 1st Max Value**: Provide measures of average and peak pollutant levels, which are key for assessing exposure and potential health effects.
+
+- **Year**: Allows for temporal analysis and matching with health data to observe trends over time.
+
+### CDC Dataset Features:
+
+- **General Health Indicators (GENHLTH, PHYSHLTH, MENTHLTH)**: Directly relate to the population's health status, serving as outcome variables in our analysis.
+
+- **Demographic Information**: Enables the identification of populations potentially more vulnerable to poor air quality.
+
+- **Chronic Conditions**: Offer insights into specific health outcomes that may be exacerbated by air pollution.
+
+### Selection Criteria:
+
+- We prioritize features that offer direct insights into air quality levels, health outcomes, and demographic characteristics relevant to our research questions.
+- Features not selected lack a direct connection to our study objectives or are redundant with other data points.
+
+
+## References
+
+
+
