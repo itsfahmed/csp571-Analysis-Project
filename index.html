@@ -9,7 +9,7 @@
             font-family: 'Arial', sans-serif;
             background-color: #f0f0f0;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,12 +17,13 @@
         }
 
         .container {
+            width: 80%;
             max-width: 900px;
             text-align: center;
             background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 40px;
             margin: 20px;
         }
 
@@ -30,23 +31,30 @@
             color: #333;
         }
 
-        a {
+        a.button {
             display: inline-block;
             background-color: #007bff;
             color: #fff;
-            padding: 10px 20px;
+            padding: 12px 24px;
+            margin: 10px;
+            border: none;
             border-radius: 5px;
             text-decoration: none;
-            transition: background-color 0.3s ease;
-            margin-top: 20px;
+            transition: background-color 0.3s, transform 0.2s;
+            font-size: 16px;
+            width: 200px;  /* Ensures consistent button width */
+            box-sizing: border-box; /* Includes padding and border in width */
         }
 
-        a:hover {
+        a.button:hover {
             background-color: #0056b3;
+            transform: translateY(-2px); /* Slightly raise the button */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
         p {
             line-height: 1.6;
+            color: #666; /* Slightly softer text color */
         }
     </style>
 </head>
@@ -60,9 +68,10 @@
         <p>Prof. Panchal</p>
         <h2>Course:</h2>
         <p>CSP 571 - Data Preparation & Analysis, Spring 2024</p>
-        <a href="docs/eda.html" target="_blank">Preliminary Exploratory Data Analysis</a>
-        <a href="docs/aqs.html" target="_blank">AQS Data</a>
-        <a href="https://fahmed22.shinyapps.io/AQS_Analysis/" target="_blank">Interactive Shiny App</a>
+        <a href="docs/eda.html" class="button" target="_blank">Exploratory Data Analysis</a>
+        <a href="docs/aqs.html" class="button" target="_blank">AQS Data Analysis</a>
+        <a href="https://fahmed22.shinyapps.io/AQS_Analysis/" class="button" target="_blank">Interactive Shiny App</a>
+        <a href="docs/ml.html" class="button" target="_blank">ML Approach</a> 
     </div>
 </body>
 </html>
