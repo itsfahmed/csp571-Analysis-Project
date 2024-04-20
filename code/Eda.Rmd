@@ -1,0 +1,120 @@
+---
+title: "Exploratory Data Analysis on COPD Dataset"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)  # for data manipulation and visualization
+library(ggplot2)    # for plotting
+library(sf)         # for spatial features
+library(usmap)      # for U.S. maps
+```
+
+## Load Data
+
+```{r load-data}
+# Load the data
+copd_data <- read.csv("/Users/fateenahmed/Documents/IIT/Sem2/dpa/project/Project-data/copd_data.csv")
+
+# Display the first few rows
+head(copd_data)
+```
+
+## Explore Data Structure
+
+```{r structure}
+# Print the column names
+colnames(copd_data)
+
+# Summary of the dataset
+summary(copd_data)
+```
+
+## Distribution of Numeric Data
+
+```{r numeric-distribution, fig.width=10, fig.height=8}
+# Histograms for numeric data
+numeric_cols <- copd_data %>% 
+  select(`Average.Income`, Percent_COPD, AQI)
+
+numeric_cols %>% 
+  gather(key = "variables", value = "value") %>%
+  ggplot(aes(x = value)) +
+  geom_histogram(bins = 30, fill = "blue", color = "black") +
+  facet_wrap(~ variables, scales = "free_x") +
+  theme_minimal() +
+  labs(title = "Distribution of Numeric Variables", x = "Value", y = "Frequency")
+```
+
+## Distribution of Categorical Data
+
+```{r categorical-distribution, fig.width=10, fig.height=8}
+# Count plots for categorical data
+copd_data %>% 
+  select(Encoded_Poverty, Income_Level, Unemployed_Level) %>%
+  gather(key = "categories", value = "category") %>%
+  ggplot(aes(x = category)) +
+  geom_bar(stat = "count", fill = "steelblue") +
+  facet_wrap(~ categories, scales = "free") +
+  theme_minimal() +
+  labs(title = "Distribution of Categorical Variables", x = "Category", y = "Count")
+```
+
+## Geospatial Distribution of COPD Prevalence
+
+```{r geospatial-map, fig.width=12, fig.height=8}
+# Load necessary libraries
+library(usmap)
+library(ggplot2)
+
+# Prepare the data
+copd_data$state <- tolower(copd_data$`State...1`)  # Ensure state names are in lowercase
+
+# Mapping COPD data by state
+state_copd <- plot_usmap(data = copd_data, values = "Percent_COPD", regions = "states") +
+  scale_fill_continuous(name = "Percent COPD", low = "white", high = "red") +
+  labs(title = "COPD Prevalence by State", subtitle = "Visualization using Geographic Data") +
+  theme_minimal() +
+  theme(legend.position = "right")
+
+state_copd
+```
+
+```{r setup-and-preparation, echo=TRUE}
+library(usmap)
+library(ggplot2)
+
+copd_data$state <- tolower(copd_data$`State...1`)  # Standardize state names
+
+# Aggregate data by state
+state_data <- copd_data %>%
+  group_by(state) %>%
+  summarize(Percent_COPD = mean(Percent_COPD, na.rm = TRUE),
+            Average_Income = mean(`Average.Income`, na.rm = TRUE),
+            AQI = mean(AQI, na.rm = TRUE),
+            .groups = 'drop')
+```
+
+#### **Plotting Average Income by State**
+
+```{r plot-average-income, echo=TRUE}
+# Plotting Average Income by state
+plot_usmap(data = state_data, values = "Average_Income", lines = "black", regions = "states") +
+  scale_fill_continuous(name = "Average Income", low = "yellow", high = "blue", label = scales::comma) +
+  labs(title = "Average Income by State", subtitle = "Impact of Economic Factors") +
+  theme_minimal() +
+  theme(legend.position = "right")
+```
+
+
+#### **Plotting Air Quality Index by State**
+
+```{r plot-aqi, echo=TRUE}
+# Plotting Air Quality Index by state
+plot_usmap(data = state_data, values = "AQI", lines = "black", regions = "states") +
+  scale_fill_continuous(name = "Air Quality Index", low = "green", high = "purple", label = scales::comma) +
+  labs(title = "Air Quality Index by State", subtitle = "Environmental Health Indicators") +
+  theme_minimal() +
+  theme(legend.position = "right")
+```

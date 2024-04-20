@@ -1,0 +1,163 @@
+---
+title: "Correlation Between Air Quality and Health Outcomes"
+author: "Fateen Ahmed"
+date: "2024-04-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(caret)
+library(cluster)
+library(factoextra)
+library(corrplot)
+library(readr)
+library(dplyr)
+```
+
+### Loading the AQS Dataset
+
+```{r load-data}
+# Load the dataset
+aqs_data <- read_csv("/Users/fateenahmed/Documents/IIT/Sem2/dpa/project/Project-data/annual_conc_by_monitor_2022.csv")
+
+# Display the structure of the dataset
+glimpse(aqs_data)
+
+unique_pollutants <- unique(aqs_data$`Parameter Name`)
+print(unique_pollutants)
+
+# If you want to explore all column names which could be useful
+print(colnames(data))
+```
+
+### Preliminary Data Exploration
+
+```{r explore-data}
+# Display summary statistics to understand distributions
+summary(aqs_data)
+
+# Checking for missing values
+colSums(is.na(aqs_data))
+
+# Display the first few rows of the dataset
+head(aqs_data)
+```
+
+### Data Cleaning
+
+```{r clean-data}
+# Remove duplicate rows
+aqs_data <- aqs_data %>% distinct()
+
+# Handling missing values for numeric columns by imputing with median
+numeric_cols <- c("Arithmetic Mean", "1st Max Value", "2nd Max Value", "3rd Max Value", "4th Max Value", "99th Percentile")
+aqs_data[numeric_cols] <- lapply(aqs_data[numeric_cols], function(x) ifelse(is.na(x), median(x, na.rm = TRUE), x))
+
+# Replace missing 'Local Site Name' and 'Method Name' with 'Unknown'
+aqs_data$`Local Site Name`[is.na(aqs_data$`Local Site Name`)] <- "Unknown"
+aqs_data$`Method Name`[is.na(aqs_data$`Method Name`)] <- "Unknown"
+
+# Recheck the structure post cleaning
+summary(aqs_data)
+```
+
+### Advanced Data Exploration
+
+```{r advanced-explore}
+# Generate histograms for some numeric variables to see distributions
+hist_vars <- c("Arithmetic Mean", "1st Max Value", "2nd Max Value")
+ggplot(gather(aqs_data, key = "variable", value = "value", hist_vars), aes(x = value)) +
+  facet_wrap(~variable, scales = "free") +
+  geom_histogram(bins = 30, fill = "steelblue", color = "black") +
+  theme_minimal() +
+  labs(title = "Distribution of Selected Air Quality Measures")
+
+# Boxplot for 'Arithmetic Mean' across different 'Sample Duration'
+ggplot(aqs_data, aes(x = `Sample Duration`, y = `Arithmetic Mean`, fill = `Sample Duration`)) +
+  geom_boxplot() +
+  labs(title = "Arithmetic Mean of Pollutants by Sample Duration") +
+  theme_minimal()
+
+# Exploring correlation between different numeric variables
+cor_data <- aqs_data %>% 
+
+
+  select(ends_with("Value"), ends_with("Percentile"), matches("Mean")) %>% 
+  na.omit()  # Remove NA for correlation analysis
+corr_matrix <- cor(cor_data)
+corrplot(corr_matrix, method = "circle")
+```
+
+### Exploratory Cluster Analysis
+
+```{r cluster-analysis}
+# Standardizing data
+aqs_data_scaled <- scale(cor_data)  # Using the same data filtered for correlation
+
+# K-means clustering
+set.seed(123)
+kmeans_result <- kmeans(aqs_data_scaled, centers = 3, nstart = 25)
+fviz_cluster(kmeans_result, data = aqs_data_scaled) +
+  labs(title = "K-Means Clustering of Air Quality Measures")
+```
+
+### Trend Analysis
+
+```{r trend-analysis}
+library(ggplot2)
+
+# Assuming 'Year' and 'Arithmetic Mean' are the columns to use
+# Change 'Parameter Name' to the specific pollutant names as needed
+ggplot(aqs_data, aes(x = Year, y = `Arithmetic Mean`, group = `Parameter Name`, color = `Parameter Name`)) +
+  geom_line() +
+  facet_wrap(~`Parameter Name`) +
+  labs(title = "Trend of Pollutants Over Years", x = "Year", y = "Mean Concentration") +
+  theme_minimal()
+```
+
+```{r comparative-analysis}
+# Comparing pollution levels by State
+ggplot(aqs_data, aes(x = `State Name`, y = `Arithmetic Mean`, fill = `State Name`)) +
+  geom_boxplot() +
+  labs(title = "Comparative Pollution Levels by State", x = "State", y = "Mean Concentration") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Additionally, comparing by County within a selected State, for example, 'California'
+california_data <- aqs_data %>% filter(`State Name` == "California")
+ggplot(california_data, aes(x = `County Name`, y = `Arithmetic Mean`, fill = `County Name`)) +
+  geom_boxplot() +
+  labs(title = "Comparative Pollution Levels by County in California", x = "County", y = "Mean Concentration") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r correlation-study}
+# Selecting numeric columns for correlation; adjust the column selection as necessary
+numeric_data <- aqs_data %>% 
+  select(ends_with("Value"), ends_with("Percentile"), matches("Mean"))
+
+# Calculating correlation matrix
+cor_matrix <- cor(numeric_data, use = "complete.obs")
+
+# Plotting the correlation matrix
+corrplot(cor_matrix, method = "circle")
+```
+
+```{r geospatial-analysis}
+library(ggmap)
+library(maps)
+
+# Basic map plotting
+us_map <- map_data("state")
+ggplot() +
+  geom_polygon(data = us_map, aes(x = long, y = lat, group = group), fill = "white", color = "black") +
+  geom_point(data = aqs_data, aes(x = Longitude, y = Latitude, color = `Arithmetic Mean`), size = 1) +
+  scale_color_viridis_c() +
+  labs(title = "Geospatial Distribution of Pollution Levels")
+```
+
+
+
