@@ -31,19 +31,26 @@
             color: #333;
         }
 
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px; /* Ensures space between buttons */
+        }
+
         a.button {
-            display: inline-block;
             background-color: #007bff;
             color: #fff;
             padding: 12px 24px;
-            margin: 10px;
             border: none;
             border-radius: 5px;
             text-decoration: none;
             transition: background-color 0.3s, transform 0.2s;
             font-size: 16px;
-            width: 200px;  /* Ensures consistent button width */
+            flex-grow: 1;
+            min-width: 180px; /* Minimum width of each button */
             box-sizing: border-box; /* Includes padding and border in width */
+            text-align: center; /* Ensures text is centered if button width varies */
         }
 
         a.button:hover {
@@ -61,17 +68,19 @@
 <body>
     <div class="container">
         <h1>Air Quality and Public Health Analysis</h1>
-        <p>This project explores how air quality impacts public health, with a particular focus on the prevalence of Chronic Obstructive Pulmonary Disease (COPD) in various counties across the United States. Utilizing data from EPA, CDC, BEA, and the US Census Bureau, we provide insights into the correlation between air pollution levels and public health outcomes.</p>
+        <p>This project explores how air quality impacts public health, with a particular focus on the prevalence of Chronic Obstructive Pulmonary Disease (COPD) in various counties across the United States. Utilizing data from EPA, CDC, BEA, and the US Census Bureau, we provide insights into the correlation between air pollution levels and health outcomes.</p>
         <h2>Project Team Members:</h2>
         <p>Fateen Ahmed, Syed Wali Uddin Quadri</p>
         <h2>Instructor:</h2>
         <p>Prof. Panchal</p>
         <h2>Course:</h2>
         <p>CSP 571 - Data Preparation & Analysis, Spring 2024</p>
-        <a href="docs/eda.html" class="button" target="_blank">Exploratory Data Analysis</a>
-        <a href="docs/aqs.html" class="button" target="_blank">AQS Data Analysis</a>
-        <a href="https://fahmed22.shinyapps.io/AQS_Analysis/" class="button" target="_blank">Interactive Shiny App</a>
-        <a href="docs/ml.html" class="button" target="_blank">ML Approach</a> 
+        <div class="button-container">
+            <a href="docs/eda.html" class="button" target="_blank">Exploratory Data Analysis</a>
+            <a href="docs/aqs.html" class="button" target="_blank">AQS Data Analysis</a>
+            <a href="https://fahmed22.shinyapps.io/AQS_Analysis/" class="button" target="_blank">Interactive Shiny App</a>
+            <a href="docs/ml.html" class="button" target="_blank">Final Report</a>
+        </div>
     </div>
 </body>
 </html>
